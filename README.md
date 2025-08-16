@@ -17,8 +17,8 @@ At only **26 KB**, it’s designed to be **blazing fast, minimal, and effortless
 - 🧵 **Concurrent In-Memory Store**  
   Built with a thread-safe concurrent queue for **non-blocking, high-speed writes**.
 
-- 💾 **Batch Inserts**  
-  Flushes requests to the database in batches, reducing write overhead.
+- 💾 **Batch Inserts & Deletes**  
+  Flushes requests to the database in batches, reducing write overhead. Deletes old rows automatically to reduce DB bloat.
 
 - 📊 **Dashboard (Early Preview)**  
   - Real-time streaming chart of requests (via SignalR).  
