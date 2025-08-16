@@ -4,8 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <IsPackable>true</IsPackable>
+        <IsPackable>true</IsPackable>        
+        <Version>0.1.0-alpha</Version>
         <RootNamespace>Nucleus.Dashboard</RootNamespace>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
