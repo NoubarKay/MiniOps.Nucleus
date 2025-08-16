@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Nucleus.Core.Config;
+using Nucleus.Core.Hubs;
 using Nucleus.Core.Middleware;
 using Nucleus.Core.Models;
 using Nucleus.Core.Services;
 using Nucleus.Core.Stores;
 using Z.Dapper.Plus;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Nucleus.Core;
 
@@ -20,10 +23,9 @@ public static class DependencyInjection
 
         var options = new NucleusOptions();
         configure(options);
-        
         // Register options as singleton
         services.AddSingleton(options);
-        
+
         // Register the central MiniOpsContext (the "Nucleus")
         services.AddSingleton<NucleusDbContext>(sp => new NucleusDbContext(new NucleusOptions
         {
@@ -52,7 +54,7 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="app">The application builder.</param>
     /// <returns>The updated application builder.</returns>
-    public static async Task<IApplicationBuilder> UseNucleus(this IApplicationBuilder app)
+    public static async Task UseNucleus(this IApplicationBuilder app)
     {
         using (var scope = app.ApplicationServices.CreateScope())
         {
@@ -64,7 +66,6 @@ public static class DependencyInjection
             }
         }
 
-        // Adds your NucleusTrackerMiddleware to the pipeline
-        return app.UseMiddleware<NucleusTrackerMiddleware>();
+        app.UseMiddleware<NucleusTrackerMiddleware>();
     }
 }

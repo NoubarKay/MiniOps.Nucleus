@@ -10,12 +10,17 @@
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.66" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
       <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
       <PackageReference Include="Microsoft.SqlServer.Server" Version="1.0.0" />
       <PackageReference Include="Z.Dapper.Plus" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.SignalR.Core">
+        <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.16\Microsoft.AspNetCore.SignalR.Core.dll</HintPath>
+      </Reference>
       <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
         <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.16\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
       </Reference>

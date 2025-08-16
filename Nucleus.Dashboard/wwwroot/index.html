@@ -2,9 +2,266 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nucleus Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <title>MiniOps Dashboard</title>
+    <style>
+        /* Base dark theme */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f111a;
+            color: #e0e0e0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #1a1c2b;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+        }
+
+        header button {
+            background: #4ade80;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        header button:hover {
+            background: #22c55e;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            padding: 1rem 2rem;
+        }
+
+        .card {
+            background-color: #1c1e34;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            flex: 1;
+            margin: 0 0.5rem;
+            background: #111227;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .metric:hover {
+            transform: translateY(-4px);
+        }
+
+        .metric h2 { margin: 0; font-size: 1rem; color: #aaa; }
+        .metric p { margin: 0.5rem 0 0 0; font-size: 1.5rem; font-weight: bold; }
+
+        .ticker {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0.5rem;
+            background-color: #111227;
+            border-radius: 12px;
+            height: 50px;
+            line-height: 50px;
+            margin-top: 1rem;
+        }
+
+        .ticker span {
+            display: inline-block;
+            margin-right: 1rem;
+            padding: 0 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .success { background-color: #4ade80; color: #000; }
+        .error   { background-color: #f87171; color: #000; }
+        .warning { background-color: #facc15; color: #000; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table th, table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #2c2c3e;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #111227;
+            font-weight: 500;
+        }
+
+        canvas {
+            border-radius: 12px;
+            background: #111227;
+            margin-top: 1rem;
+        }
+
+    </style>
 </head>
 <body>
-Hello World
+
+<header>
+    <h1>MiniOps Dashboard</h1>
+    <button onclick="location.reload()">Refresh</button>
+</header>
+
+<div class="container">
+
+    <!-- Main Panel -->
+    <div class="card">
+        <div class="metrics">
+            <div class="metric">
+                <h2>Total Requests</h2>
+                <p id="total">0</p>
+            </div>
+            <div class="metric">
+                <h2>Success</h2>
+                <p id="success">0</p>
+            </div>
+            <div class="metric">
+                <h2>Errors</h2>
+                <p id="errors">0</p>
+            </div>
+        </div>
+
+        <!-- Streaming Chart -->
+        <canvas id="metricsChart" width="600" height="200"></canvas>
+
+        <!-- Ticker -->
+        <h3>Request Ticker</h3>
+        <div class="ticker" id="ticker"></div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="card">
+        <h2>Nodes Status</h2>
+        <ul id="nodes">
+            <li>Node A: healthy</li>
+            <li>Node B: healthy</li>
+            <li>Node C: warning</li>
+        </ul>
+
+        <h2>Recent Requests</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>Duration</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="requestTable">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<script>
+    // Metrics counters
+    const totalEl = document.getElementById('total');
+    const successEl = document.getElementById('success');
+    const errorsEl = document.getElementById('errors');
+
+    const ticker = document.getElementById('ticker');
+    const tableBody = document.getElementById('requestTable');
+
+    // Setup chart
+    const ctx = document.getElementById("metricsChart").getContext("2d");
+
+    const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            datasets: [
+                { label: "Request Count", borderColor: "#00ffd0", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(0,255,208,0.2)" },
+                { label: "Success Count", borderColor: "#4bc05a", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(75,192,90,0.2)" },
+                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+            ]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            plugins: {
+                tooltip: { enabled: true, mode: "nearest", intersect: false },
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    type: "realtime",
+                    realtime: {
+                        duration: 30000,
+                        refresh: 10000,
+                        delay: 2000,
+                        onRefresh: chart => {
+                            // Nothing here; we will push data from SignalR
+                        }
+                    },
+                    ticks: { color: "#ccc" },
+                    grid: { color: "rgba(255,255,255,0.05)" }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: "#ccc" },
+                    grid: { color: "rgba(255,255,255,0.05)" }
+                }
+            }
+        }
+    });
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/dashboard/nucleus-hub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.start()
+        .then(() => console.log("Connected to MetricsHub"))
+        .catch(err => console.error(err));
+
+    connection.on("ReceiveMetrics", (data) => {
+        console.log("Received Metrics", data);
+        const now = Date.now();
+        chart.data.datasets[0].data.push({ x: now, y: data.totalRequests });
+        chart.data.datasets[1].data.push({ x: now, y: data.totalSuccessRequests });
+        chart.data.datasets[2].data.push({ x: now, y: data.totalFailedRequests });
+        
+        chart.update("none");
+    })
+</script>
+
 </body>
 </html>

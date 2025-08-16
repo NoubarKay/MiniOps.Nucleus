@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using Dapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nucleus.Core.Hubs;
 using Nucleus.Core.Stores;
 using Z.Dapper.Plus;
 
@@ -10,7 +12,8 @@ namespace Nucleus.Core.Services;
 public class NucleusRequestLogService(
     IRequestStore store,
     NucleusDbContext dbContext,
-    ILogger<NucleusRequestLogService> logger) : BackgroundService
+    ILogger<NucleusRequestLogService> logger, 
+    IHubContext<NucleusHub> hub) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -27,14 +30,15 @@ public class NucleusRequestLogService(
 
                 var stopwatch = Stopwatch.StartNew();
 
-                // ✅ bulk insert in one query
-                var sql = "INSERT INTO Nucleus.RequestMetrics (Id, Timestamp, DurationMs, StatusCode, Path) " +
-                          "VALUES (@Id, @Timestamp, @DurationMs, @StatusCode, @Path);";
-
                 await conn.BulkInsertAsync(logs);
 
                 stopwatch.Stop();
-
+                await hub.Clients.All.SendAsync("ReceiveMetrics", new {
+                    totalRequests = logs.Count,
+                    totalSuccessRequests = logs.Count(x => x.StatusCode == 200),
+                    totalFailedRequests = logs.Count(x=>x.StatusCode != 200)
+                }, cancellationToken: stoppingToken);
+                
                 logger.LogInformation(
                     "Inserted {Count} request logs in {ElapsedMs} ms",
                     logs.Count,

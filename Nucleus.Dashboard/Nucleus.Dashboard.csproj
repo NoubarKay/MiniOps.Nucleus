@@ -15,4 +15,8 @@
         <EmbeddedResource Include="wwwroot\**\*.*" />
     </ItemGroup>
     
+    <ItemGroup>
+      <ProjectReference Include="..\Nucleus.Core\Nucleus.Core.csproj" />
+    </ItemGroup>
+    
 </Project>

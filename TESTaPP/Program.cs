@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddNucleus(op =>
 {
     op.LogTTLSeconds = 60;
-    op.BatchFlushIntervalSeconds = 0.5f;
+    op.BatchFlushIntervalSeconds = 1;
     op.DatabaseType = NucleusDatabaseTypes.SQLServer;
     op.SchemaName = "Nucleus";
     op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
@@ -41,6 +41,13 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
     {
+        // 25% chance to fail
+        if (Random.Shared.NextDouble() < 0.25)
+        {
+            // This will return a 500 Internal Server Error
+            throw new Exception("Simulated server error");
+        }
+
         var forecast = Enumerable.Range(1, 5).Select(index =>
                 new WeatherForecast
                 (
@@ -49,6 +56,7 @@ app.MapGet("/weatherforecast", () =>
                     summaries[Random.Shared.Next(summaries.Length)]
                 ))
             .ToArray();
+
         return forecast;
     })
     .WithName("GetWeatherForecast")

@@ -1,6 +1,8 @@
 using Dapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Nucleus.Core.Hubs;
 using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Services;

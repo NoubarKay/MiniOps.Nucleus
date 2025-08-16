@@ -9,21 +9,33 @@ public class NucleusTrackerMiddleware(RequestDelegate next, IRequestStore logSto
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        var sw = Stopwatch.StartNew();
+        var stopwatch = Stopwatch.StartNew();
+        int statusCode = 200;
 
-        await next(context);
-
-        sw.Stop();
-
-        var log = new NucleusLog
+        try
         {
-            Id = Guid.NewGuid(),
-            Timestamp = DateTime.UtcNow,
-            DurationMs = sw.ElapsedMilliseconds,
-            StatusCode = context.Response.StatusCode,
-            Path = context.Request.Path
-        };
+            await next(context);
+            statusCode = context.Response.StatusCode;
+        }
+        catch
+        {
+            statusCode = 500;
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
 
-        logStore.Add(log);
+            var metric = new NucleusLog
+            {
+                Id = Guid.NewGuid(),
+                Timestamp = DateTime.UtcNow,
+                DurationMs = stopwatch.ElapsedMilliseconds,
+                StatusCode = statusCode,
+                Path = context.Request?.Path.Value ?? "/"
+            };
+
+            logStore.Add(metric);
+        }
     }
 }

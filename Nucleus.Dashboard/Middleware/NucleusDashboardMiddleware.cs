@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
+using Nucleus.Core.Hubs;
 
 namespace Nucleus.Dashboard.Middleware;
 
@@ -80,7 +81,7 @@ public static class NucleusDashboardMiddleware
 
                 // Map the SignalR hub.
                 // Inside the branch, map with a relative path.
-                // endpoints.MapHub<TickerQNotificationHub>("/ticker-notification-hub");
+                endpoints.MapHub<NucleusHub>("/nucleus-hub");
             });
 
             // SPA fallback middleware: if no route is matched, serve the modified index.html
