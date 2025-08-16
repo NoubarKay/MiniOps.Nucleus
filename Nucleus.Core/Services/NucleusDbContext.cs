@@ -1,5 +1,6 @@
 
 using System.Data;
+using Dapper;
 using Nucleus.Core.Config;
 using Microsoft.Data.SqlClient;
 namespace Nucleus.Core.Services;
@@ -29,6 +30,7 @@ public class NucleusDbContext(NucleusOptions options)
 
     public async Task<IDbConnection> OpenAsync(IDbConnection connection, CancellationToken cancellationToken = default)
     {
+        
         if (connection is SqlConnection sqlConn)
         {
             await sqlConn.OpenAsync(cancellationToken);
@@ -39,6 +41,39 @@ public class NucleusDbContext(NucleusOptions options)
         }
 
         return connection;
+    }
+    
+    public async Task EnsureNucleusDatabase(string connectionString)
+    {
+        try{
+            var createTableSql = @"
+            IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Nucleus')
+            BEGIN
+                EXEC('CREATE SCHEMA [Nucleus]')
+            END;
+
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
+            BEGIN
+                CREATE TABLE [Nucleus].[RequestMetrics](
+                    [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+                    [Timestamp] DATETIME2 NOT NULL,
+                    [DurationMs] BIGINT NOT NULL,
+                    [StatusCode] INT NOT NULL,
+                    [Path] NVARCHAR(2048) NOT NULL
+                )
+            END;
+            ";
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            await connection.ExecuteAsync(createTableSql);
+            Console.WriteLine("Nucleus tables are ready.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while initializing Nucleus database: {ex.Message}");
+            throw;
+        }
     }
     
     /// <summary>

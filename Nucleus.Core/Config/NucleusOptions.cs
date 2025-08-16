@@ -27,4 +27,9 @@ public class NucleusOptions
     /// Optional custom table name for request logs.
     /// </summary>
     public string SchemaName { get; set; } = "Nucleus";
+    
+    /// <summary>
+    /// Optional custom table name for request logs.
+    /// </summary>
+    public bool SeedDatabase { get; set; } = false;
 }

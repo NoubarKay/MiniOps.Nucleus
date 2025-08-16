@@ -25,6 +25,7 @@ public static class DependencyInjection
             DatabaseType = options.DatabaseType,
             ConnectionString = options.ConnectionString,
             LogTTLSeconds = options.LogTTLSeconds,
+            SeedDatabase = options.SeedDatabase
             // EnableSimulation = options.EnableSimulation,
             // DefaultSimulatedLatencyMs = options.DefaultSimulatedLatencyMs,
             // DefaultSimulatedFailureRate = options.DefaultSimulatedFailureRate,
@@ -43,8 +44,18 @@ public static class DependencyInjection
     /// </summary>
     /// <param name="app">The application builder.</param>
     /// <returns>The updated application builder.</returns>
-    public static IApplicationBuilder UseNucleus(this IApplicationBuilder app)
+    public static async Task<IApplicationBuilder> UseNucleus(this IApplicationBuilder app)
     {
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<NucleusDbContext>();
+
+            if (dbContext.Options.SeedDatabase)
+            {
+                await dbContext.EnsureNucleusDatabase(dbContext.Options.ConnectionString);
+            }
+        }
+
         // Adds your NucleusTrackerMiddleware to the pipeline
         return app.UseMiddleware<NucleusTrackerMiddleware>();
     }

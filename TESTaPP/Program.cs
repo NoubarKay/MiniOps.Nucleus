@@ -14,6 +14,7 @@ builder.Services.AddNucleus(op =>
     op.DatabaseType = NucleusDatabaseTypes.SQLServer;
     op.SchemaName = "Nucleus";
     op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException();
+    op.SeedDatabase = true;
 });
 
 var app = builder.Build();

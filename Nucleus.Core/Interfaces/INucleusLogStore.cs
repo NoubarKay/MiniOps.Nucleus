@@ -19,7 +19,7 @@ public class NucleusLogStore(NucleusDbContext db) : INucleusLogStore
         await db.OpenAsync(connection, cancellationToken);
         
         var sql = @"
-        INSERT INTO NucleusLogs (Id, Timestamp, DurationMs, StatusCode, Path)
+        INSERT INTO Nucleus.RequestMetrics (Id, Timestamp, DurationMs, StatusCode, Path)
         VALUES (@Id, @Timestamp, @DurationMs, @StatusCode, @Path);";
         
         await connection.ExecuteAsync(
