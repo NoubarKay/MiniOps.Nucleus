@@ -35,12 +35,6 @@ At only **26 KB**, it’s designed to be **blazing fast, minimal, and effortless
 Quick start
 Register Nucleus in DI and configure options:
 ```csharp
-var builder = WebApplication.CreateBuilder(args);
-
-// Optional: Swagger, etc.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 // Register Nucleus Core
 builder.Services.AddNucleus(op =>
 {
@@ -54,17 +48,7 @@ builder.Services.AddNucleus(op =>
 
 var app = builder.Build();
 
-// Optional: dev-time tools
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-// Your endpoints
-app.MapGet("/ping", () => Results.Ok("pong"));
+//...
 
 // Start Nucleus (seeding + background services)
 await app.UseNucleus();
@@ -74,6 +58,18 @@ app.Run();
 That’s it—requests flowing through the app are tracked and written to your database in batches. Old rows are purged automatically based on LogTTLSeconds.
 
 --
+
+## Configuration Options
+| Property                    | Type                   | Default     | Description                                                                                                         |
+| --------------------------- | ---------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `DatabaseType`              | `NucleusDatabaseTypes` | —           | The type of database MiniOps will use. Supported: SqlServer (More to come)                                          |
+| `ConnectionString`          | `string`               | `""`        | The connection string for the selected database                                                                     |
+| `LogTTLSeconds`             | `int`                  | `1`         | Time-to-live for request logs, in seconds. Expired logs are deleted automatically by the background cleanup service |
+| `BatchFlushIntervalSeconds` | `float`                | `1`         | How often, in seconds, the background flush service writes accumulated logs to the database                         |
+| `SchemaName`                | `string`               | `"Nucleus"` | Optional custom schema/table name for request logs                                                                  |
+| `SeedDatabase`              | `bool`                 | `false`     | Whether to seed the database automatically on startup                                                               |
+---
+
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome!  
 Please check the [issues](https://github.com/NoubarKay/MiniOps.Nucleus/issues) before creating new ones.
