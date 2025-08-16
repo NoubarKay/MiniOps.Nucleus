@@ -29,3 +29,7 @@ At only **26 KB**, it’s designed to be **blazing fast, minimal, and effortless
   With a **26 KB footprint**, MiniOps.Nucleus is one of the lightest metrics solutions you can add to your project.
 
 ---
+
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome!  
+Please check the [issues](https://github.com/NoubarKay/MiniOps.Nucleus/issues) before creating new ones.
