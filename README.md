@@ -30,6 +30,50 @@ At only **26 KB**, it’s designed to be **blazing fast, minimal, and effortless
 
 ---
 
+## Getting Started
+
+Quick start
+Register Nucleus in DI and configure options:
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Optional: Swagger, etc.
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Register Nucleus Core
+builder.Services.AddNucleus(op =>
+{
+    op.DatabaseType = NucleusDatabaseTypes.SQLServer; // SQLServer
+    op.ConnectionString = "<your-connection-string>";
+    op.SchemaName = "Nucleus";           // optional, default "Nucleus"
+    op.LogTTLSeconds = 60;               // delete logs older than 60s
+    op.BatchFlushIntervalSeconds = 1;    // flush in-memory logs every 1s
+    op.SeedDatabase = true;              // auto-create schema/table if needed
+});
+
+var app = builder.Build();
+
+// Optional: dev-time tools
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+// Your endpoints
+app.MapGet("/ping", () => Results.Ok("pong"));
+
+// Start Nucleus (seeding + background services)
+await app.UseNucleus();
+
+app.Run();
+```
+That’s it—requests flowing through the app are tracked and written to your database in batches. Old rows are purged automatically based on LogTTLSeconds.
+
+--
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome!  
 Please check the [issues](https://github.com/NoubarKay/MiniOps.Nucleus/issues) before creating new ones.
