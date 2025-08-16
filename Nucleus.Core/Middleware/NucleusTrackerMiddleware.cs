@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Nucleus.Core.Interfaces;
 using Nucleus.Core.Models;
+using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Middleware;
 
-public class NucleusTrackerMiddleware(RequestDelegate next)
+public class NucleusTrackerMiddleware(RequestDelegate next, IRequestStore logStore)
 {
-    public async Task InvokeAsync(HttpContext context, INucleusLogStore logStore)
+    public async Task InvokeAsync(HttpContext context)
     {
         var sw = Stopwatch.StartNew();
 
@@ -24,6 +24,6 @@ public class NucleusTrackerMiddleware(RequestDelegate next)
             Path = context.Request.Path
         };
 
-        await logStore.SaveLogAsync(log);
+        logStore.Add(log);
     }
 }

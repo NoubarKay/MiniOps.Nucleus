@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Nucleus.Core.Config;
-using Nucleus.Core.Interfaces;
 using Nucleus.Core.Middleware;
 using Nucleus.Core.Services;
+using Nucleus.Core.Stores;
 
 namespace Nucleus.Core;
 
@@ -25,6 +25,7 @@ public static class DependencyInjection
             DatabaseType = options.DatabaseType,
             ConnectionString = options.ConnectionString,
             LogTTLSeconds = options.LogTTLSeconds,
+            BatchFlushIntervalSeconds = options.BatchFlushIntervalSeconds,
             SeedDatabase = options.SeedDatabase
             // EnableSimulation = options.EnableSimulation,
             // DefaultSimulatedLatencyMs = options.DefaultSimulatedLatencyMs,
@@ -34,7 +35,9 @@ public static class DependencyInjection
             // DbCommandTimeoutSeconds = options.DbCommandTimeoutSeconds
         }));
         
-        services.AddTransient<INucleusLogStore, NucleusLogStore>();
+        services.AddSingleton<IRequestStore, RequestStore>();
+        services.AddHostedService<NucleusRequestFlushService>();
+        services.AddHostedService<NucleusRequestLogService>();
         
         return services;
     }

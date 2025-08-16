@@ -21,7 +21,12 @@ public class NucleusOptions
     /// Time-to-live for request logs, in seconds.
     /// Expired logs will be deleted automatically by the background cleanup service.
     /// </summary>
-    public int LogTTLSeconds { get; set; } = 60;
+    public int LogTTLSeconds { get; set; } = 1;
+    
+    /// <summary>
+    /// How often, in seconds, the background flush service writes accumulated logs to the database.
+    /// </summary>
+    public int BatchFlushIntervalSeconds { get; set; } = 1;
     
     /// <summary>
     /// Optional custom table name for request logs.

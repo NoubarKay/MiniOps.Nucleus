@@ -10,10 +10,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddNucleus(op =>
 {
-    op.LogTTLSeconds = 60;
+    op.LogTTLSeconds = 1;
     op.DatabaseType = NucleusDatabaseTypes.SQLServer;
     op.SchemaName = "Nucleus";
-    op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException();
+    op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                          throw new InvalidOperationException();
     op.SeedDatabase = true;
 });
 
@@ -48,7 +49,7 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
-app.UseNucleus();
+await app.UseNucleus();
 
 app.Run();
 
