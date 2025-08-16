@@ -1,6 +1,6 @@
 # MiniOps.Nucleus
-![NuGet](https://img.shields.io/nuget/v0.0.1-alpha/MiniOps.Nucleus.Core?style=flat-square)  
-![License](https://img.shields.io/github/license/noubarkay/MiniOps.Nucleus?style=flat-square)  
+![NuGet](https://img.shields.io/nuget/0.1.0-alpha/MiniOps.Nucleus.Core?style=flat-square)  
+![License](https://img.shields.io/github/MIT/noubarkay/MiniOps.Nucleus?style=flat-square)  
 ![Size](https://img.shields.io/badge/package_size-26KB-lightgreen?style=flat-square)
 
 **MiniOps.Nucleus** is a lightweight request metrics collector and dashboard package for .NET applications.  
