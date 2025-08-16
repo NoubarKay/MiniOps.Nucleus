@@ -57,7 +57,7 @@ app.Run();
 ```
 That’s it—requests flowing through the app are tracked and written to your database in batches. Old rows are purged automatically based on LogTTLSeconds.
 
---
+---
 
 ## Configuration Options
 | Property                    | Type                   | Default     | Description                                                                                                         |
