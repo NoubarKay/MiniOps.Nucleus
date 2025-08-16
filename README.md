@@ -1,29 +1,31 @@
 # MiniOps.Nucleus
-![NuGet](https://img.shields.io/nuget/0.1.0-alpha/MiniOps.Nucleus.Core?style=flat-square)  
-![License](https://img.shields.io/github/MIT/noubarkay/MiniOps.Nucleus?style=flat-square)  
+
+[![NuGet](https://img.shields.io/nuget/vpre/MiniOps.Nucleus.Core?style=flat-square)](https://www.nuget.org/packages/MiniOps.Nucleus.Core)  
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)  
 ![Size](https://img.shields.io/badge/package_size-26KB-lightgreen?style=flat-square)
 
-**MiniOps.Nucleus** is a lightweight request metrics collector and dashboard package for .NET applications.  
-At only **26 KB**, it’s designed to be blazing fast, minimal, and easy to integrate into your services.
+**MiniOps.Nucleus** is a **lightweight request metrics collector and dashboard** for .NET applications.  
+At only **26 KB**, it’s designed to be **blazing fast, minimal, and effortless** to integrate into your services.
+
 ---
 
 ## ✨ Features
 
 - 🔎 **Request Metrics Tracking**  
-  Captures request duration, status code, path, and timestamps.
+  Collects request duration, status codes, paths, and timestamps.
 
-- 🧵 **Concurrent Store**  
-  Uses an in-memory concurrent queue for fast non-blocking writes.
+- 🧵 **Concurrent In-Memory Store**  
+  Built with a thread-safe concurrent queue for **non-blocking, high-speed writes**.
 
-- 💾 **Efficient Inserts**  
-  Requests are flushed in batches to reduce DB write overhead.
+- 💾 **Batch Inserts**  
+  Flushes requests to the database in batches, reducing write overhead.
 
 - 📊 **Dashboard (Early Preview)**  
-  - Realtime streaming chart of requests (via SignalR).  
-  - Currently **only the graph is implemented**.  
-  - More panels (status breakdown, latency distribution, etc.) coming soon.
+  - Real-time streaming chart of requests (via SignalR).  
+  - Currently, **only the request graph is implemented**.  
+  - Upcoming panels: status breakdown, latency distribution, and more.
 
 - ⚡ **Ultra Lightweight**  
-  With a **26 KB footprint**, MiniOps.Nucleus is one of the lightest metrics packages you can add to your project.
+  With a **26 KB footprint**, MiniOps.Nucleus is one of the lightest metrics solutions you can add to your project.
 
 ---
