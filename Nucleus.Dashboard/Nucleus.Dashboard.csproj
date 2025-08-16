@@ -10,10 +10,9 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.16"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
-
+    
     <ItemGroup>
-      <ProjectReference Include="..\Nucleus.Core\Nucleus.Core.csproj" />
-      <ProjectReference Include="..\Nucleus.Dashboard\Nucleus.Dashboard.csproj" />
+        <EmbeddedResource Include="wwwroot\**\*.*" />
     </ItemGroup>
-
+    
 </Project>

@@ -60,7 +60,11 @@ public class NucleusDbContext(NucleusOptions options)
                     [DurationMs] BIGINT NOT NULL,
                     [StatusCode] INT NOT NULL,
                     [Path] NVARCHAR(2048) NOT NULL
-                )
+                );
+
+                -- Add index on Timestamp for faster queries and deletes
+                CREATE NONCLUSTERED INDEX IX_RequestMetrics_Timestamp
+                ON [Nucleus].[RequestMetrics]([Timestamp]);
             END;
             ";
             using var connection = new SqlConnection(connectionString);

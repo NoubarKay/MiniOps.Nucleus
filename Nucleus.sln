@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nucleus.Core", "Nucleus.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TESTaPP", "TESTaPP\TESTaPP.csproj", "{8730C30E-9A95-4370-8005-895F22417705}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nucleus.Dashboard", "Nucleus.Dashboard\Nucleus.Dashboard.csproj", "{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{8730C30E-9A95-4370-8005-895F22417705}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8730C30E-9A95-4370-8005-895F22417705}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8730C30E-9A95-4370-8005-895F22417705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

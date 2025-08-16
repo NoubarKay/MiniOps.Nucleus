@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Nucleus.Core.Config;
 using Nucleus.Core.Middleware;
+using Nucleus.Core.Models;
 using Nucleus.Core.Services;
 using Nucleus.Core.Stores;
+using Z.Dapper.Plus;
 
 namespace Nucleus.Core;
 
@@ -12,6 +14,9 @@ public static class DependencyInjection
     public static IServiceCollection AddNucleus(this IServiceCollection services, Action<NucleusOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(configure);
+        
+        DapperPlusManager.Entity<NucleusLog>()
+            .Table("Nucleus.RequestMetrics");
 
         var options = new NucleusOptions();
         configure(options);

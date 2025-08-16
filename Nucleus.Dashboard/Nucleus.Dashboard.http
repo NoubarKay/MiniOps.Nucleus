@@ -1,0 +1,6 @@
+@Nucleus.Dashboard_HostAddress = http://localhost:5124
+
+GET {{Nucleus.Dashboard_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

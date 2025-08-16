@@ -26,7 +26,7 @@ public class NucleusOptions
     /// <summary>
     /// How often, in seconds, the background flush service writes accumulated logs to the database.
     /// </summary>
-    public int BatchFlushIntervalSeconds { get; set; } = 1;
+    public float BatchFlushIntervalSeconds { get; set; } = 1;
     
     /// <summary>
     /// Optional custom table name for request logs.

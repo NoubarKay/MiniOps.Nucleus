@@ -1,27 +1,9 @@
-using System.Diagnostics;
-using Nucleus.Core;
-using Nucleus.Core.Config;
-using Nucleus.Dashboard.Middleware;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddNucleus(op =>
-{
-    op.LogTTLSeconds = 60;
-    op.BatchFlushIntervalSeconds = 0.5f;
-    op.DatabaseType = NucleusDatabaseTypes.SQLServer;
-    op.SchemaName = "Nucleus";
-    op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                          throw new InvalidOperationException();
-    op.SeedDatabase = true;
-});
-
-builder.Services.AddNucleusDashboardService();
 
 var app = builder.Build();
 
@@ -53,9 +35,6 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
-
-await app.UseNucleus();
-app.UseNucleusDashboard("/dashboard");
 
 app.Run();
 

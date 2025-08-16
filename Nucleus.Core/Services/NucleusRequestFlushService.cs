@@ -1,34 +1,65 @@
 using Dapper;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Services;
 
 public class NucleusRequestFlushService(
     IRequestStore store,
-    NucleusDbContext dbContext) : BackgroundService
+    NucleusDbContext dbContext,
+    ILogger<NucleusRequestFlushService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var interval = TimeSpan.FromSeconds(1);
+        var table = $"{dbContext.Options.SchemaName}.RequestMetrics";
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var conn = dbContext.CreateConnection();
-            await dbContext.OpenAsync(conn, stoppingToken);
+            try
+            {
+                using var conn = dbContext.CreateConnection();
+                await dbContext.OpenAsync(conn, stoppingToken);
 
-            // ✅ bulk insert in one query
-            var sql = @"
-                DELETE FROM Nucleus.RequestMetrics
-                WHERE Timestamp < @ExpiryTime;
-            ";
+                var sql = $@"
+                    DELETE FROM {table}
+                    WHERE Timestamp < @ExpiryTime;";
 
-            var expiryTime = DateTime.UtcNow - TimeSpan.FromSeconds(dbContext.Options.LogTTLSeconds);
+                var expiryTime = DateTime.UtcNow - TimeSpan.FromSeconds(dbContext.Options.LogTTLSeconds);
 
-            await conn.ExecuteAsync(sql, new { ExpiryTime = expiryTime });
+                var deletedCount = await conn.ExecuteAsync(sql, new { ExpiryTime = expiryTime });
 
-            await Task.Delay(interval, stoppingToken);
+                if (deletedCount > 0)
+                {
+                    logger.LogInformation(
+                        "Deleted {Count} expired request logs older than {ExpiryTime:O}",
+                        deletedCount,
+                        expiryTime
+                    );
+                }
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                // Graceful shutdown
+                break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error while deleting expired request metrics.");
+                // Optional: backoff to avoid tight error loop
+            }
+
+            try
+            {
+                await Task.Delay(interval, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
         }
     }
+    
+    
 }
