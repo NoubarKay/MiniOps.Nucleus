@@ -5,6 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Version>0.1.0-alpha</Version>
+        <IsPackable>true</IsPackable>
+        <RootNamespace>Nucleus.Core</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,15 +17,7 @@
       <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
       <PackageReference Include="Microsoft.SqlServer.Server" Version="1.0.0" />
       <PackageReference Include="Z.Dapper.Plus" Version="8.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.SignalR.Core">
-        <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.16\Microsoft.AspNetCore.SignalR.Core.dll</HintPath>
-      </Reference>
-      <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
-        <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.16\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
-      </Reference>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.16"/>
     </ItemGroup>
 
 </Project>

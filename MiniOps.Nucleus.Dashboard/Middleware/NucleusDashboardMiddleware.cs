@@ -26,7 +26,7 @@ public static class NucleusDashboardMiddleware
     {
         // Get the assembly and set up the embedded file provider (adjust the namespace as needed)
         var assembly = Assembly.GetExecutingAssembly();
-        var embeddedFileProvider = new EmbeddedFileProvider(assembly, "Nucleus.Dashboard.wwwroot");
+        var embeddedFileProvider = new EmbeddedFileProvider(assembly, "MiniOps.Nucleus.Dashboard.wwwroot");
 
         // Ensure basePath starts with a "/" and does not end with one.
         if (string.IsNullOrEmpty(basePath))

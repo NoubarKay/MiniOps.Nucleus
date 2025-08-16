@@ -4,6 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <IsPackable>true</IsPackable>
+        <RootNamespace>Nucleus.Dashboard</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +18,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\Nucleus.Core\Nucleus.Core.csproj" />
+      <ProjectReference Include="..\MiniOps.Nucleus.Core\MiniOps.Nucleus.Core.csproj" />
     </ItemGroup>
     
 </Project>

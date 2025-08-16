@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nucleus.Core\Nucleus.Core.csproj" />
-      <ProjectReference Include="..\Nucleus.Dashboard\Nucleus.Dashboard.csproj" />
+      <ProjectReference Include="..\MiniOps.Nucleus.Core\MiniOps.Nucleus.Core.csproj" />
+      <ProjectReference Include="..\MiniOps.Nucleus.Dashboard\MiniOps.Nucleus.Dashboard.csproj" />
     </ItemGroup>
 
 </Project>
