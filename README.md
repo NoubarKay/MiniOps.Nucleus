@@ -1,5 +1,5 @@
 # MiniOps.Nucleus
-![NuGet](https://img.shields.io/nuget/v/MiniOps.Nucleus?style=flat-square)  
+![NuGet](https://img.shields.io/nuget/v0.0.1-alpha/MiniOps.Nucleus.Core?style=flat-square)  
 ![License](https://img.shields.io/github/license/noubarkay/MiniOps.Nucleus?style=flat-square)  
 ![Size](https://img.shields.io/badge/package_size-26KB-lightgreen?style=flat-square)
 
