@@ -9,11 +9,16 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/NoubarKay/MiniOps.Nucleus/build.yml?style=flat-square)](https://github.com/NoubarKay/MiniOps.Nucleus/actions)
 
 
-**MiniOps.Nucleus** is a **high-performance, ultra-lightweight request metrics collector and real-time dashboard** for .NET applications. With a footprint of just **26 KB**, it provides a minimal yet powerful solution for monitoring your application's request traffic without adding overhead.
+**MiniOps.Nucleus** is a **high-performance, ultra-lightweight request metrics collector and real-time dashboard** for .NET applications.  
+With a footprint of just **26 KB**, it provides a minimal yet powerful solution for monitoring your application's request traffic without adding overhead.
 
-It captures key request metrics — including duration, status codes, paths, and timestamps — and stores them in a **thread-safe, in-memory queue** for **non-blocking, high-speed writes**. Logs are **flushed in batches** to your database to reduce write operations and automatically **cleaned up** based on configurable retention settings.
+It captures key request metrics — including duration, status codes, paths, and timestamps — and stores them in a **thread-safe, in-memory queue** for **non-blocking, high-speed writes**.  
+Logs are **flushed in batches** to your database using **[Dapper](https://github.com/DapperLib/Dapper)** and **[Dapper Plus](https://github.com/zzzprojects/Dapper-Plus)** — delivering **raw ADO.NET-level performance** with optimized **bulk inserts** to keep persistence blazing fast and efficient.  
+Automatic cleanup runs based on configurable retention settings to keep storage lean.
 
-MiniOps.Nucleus also includes an **early-preview SignalR-powered dashboard** for real-time visualization of request patterns, making it easy to monitor performance, spot spikes, and identify bottlenecks. Its lightweight design and simple integration make it ideal for **APIs, and high-throughput web applications**.
+MiniOps.Nucleus also includes an **early-preview SignalR-powered dashboard** for real-time visualization of request patterns, making it easy to monitor performance, spot spikes, and identify bottlenecks.  
+
+Its lightweight design and simple integration make it ideal for **APIs and high-throughput web applications**.
 
 
 ---
