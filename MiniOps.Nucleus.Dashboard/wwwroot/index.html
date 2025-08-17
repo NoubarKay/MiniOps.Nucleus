@@ -263,6 +263,8 @@
         chart.data.datasets[2].data.push({ x: now, y: data.totalFailedRequests });
 
         totalEl.innerText = (parseInt(totalEl.innerText) || 0) + data.totalRequests;
+        successEl.innerText = (parseInt(successEl.innerText) || 0) + data.totalSuccessRequests;
+        errorsEl.innerText = (parseInt(errorsEl.innerText) || 0) + data.totalFailedRequests;
         
         chart.update("none");
     })
