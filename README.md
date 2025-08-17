@@ -10,14 +10,18 @@
 With a footprint of just **26 KB**, it provides a minimal yet powerful solution for monitoring your application's request traffic without adding overhead.
 
 It captures key request metrics — including duration, status codes, paths, and timestamps — and stores them in a **thread-safe, in-memory queue** for **non-blocking, high-speed writes**.  
-Logs are **flushed in batches** to your database using **[Dapper](https://github.com/DapperLib/Dapper)** and **[Dapper Plus](https://github.com/zzzprojects/Dapper-Plus)** — delivering **raw ADO.NET-level performance** with optimized **bulk inserts** to keep persistence blazing fast and efficient.  
+Logs are **flushed in batches** to your database using **[Dapper](https://github.com/DapperLib/Dapper)** and **[Dapper Plus](https://github.com/zzzprojects/Dapper-Plus)** with optimized **bulk inserts** to keep persistence blazing fast and efficient.  
 Automatic cleanup runs based on configurable retention settings to keep storage lean.
 
 MiniOps.Nucleus also includes an **early-preview SignalR-powered dashboard** for real-time visualization of request patterns, making it easy to monitor performance, spot spikes, and identify bottlenecks.  
 
 Its lightweight design and simple integration make it ideal for **APIs and high-throughput web applications**.
 
-
+---
+## ⚠️ Known Limitations (Pre-Release Stage)
+- **Dashboard is currently only functional for the live graph and total cards.**
+  - Metrics cards, request ticker, recent requests table, and nodes status panel are **not yet populated in real-time**.
+- SignalR may lag under extremely high traffic. Adjust `BatchFlushIntervalSeconds` in `NucleusDbContext` for optimal performance.
 ---
 
 ## ✨ Features
@@ -90,7 +94,7 @@ Yes, MiniOps.Nucleus uses a ConcurrentQueue for non-blocking, thread-safe writes
 Currently, a database is required for batch inserts.
 
 **Which databases are supported?**  
-SQLServer is fully supported; PostgreSQL, MySQL, SQLite support coming soon.
+SQLServer, PostgreSQL, and SQLite are fully supported; More support coming soon.
 
 **Does it impact app performance?**  
 It is designed to be lightweight and minimal, with <1ms overhead per request.
