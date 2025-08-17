@@ -4,7 +4,7 @@ namespace Nucleus.Core.Config;
 /// Central configuration object for MiniOps.
 /// Holds DB info, TTL, simulation settings, and other runtime options.
 /// </summary>
-public class NucleusOptions
+public sealed class NucleusOptions
 {
     /// <summary>
     /// The type of database MiniOps will use.

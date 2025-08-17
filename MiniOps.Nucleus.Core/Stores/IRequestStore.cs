@@ -2,20 +2,13 @@ using System.Collections.Concurrent;
 using Nucleus.Core.Models;
 
 namespace Nucleus.Core.Stores;
-
-public interface IRequestStore
-{
-    void Add(NucleusLog log);
-    List<NucleusLog> Flush();
-}
-
-public class RequestStore : IRequestStore
+public sealed class RequestStore
 {
     private readonly ConcurrentQueue<NucleusLog> _queue = new();
 
     public void Add(NucleusLog log) => _queue.Enqueue(log);
 
-    public List<NucleusLog> Flush()
+    public IReadOnlyList<NucleusLog> Flush()
     {
         var list = new List<NucleusLog>();
         while (_queue.TryDequeue(out var log))

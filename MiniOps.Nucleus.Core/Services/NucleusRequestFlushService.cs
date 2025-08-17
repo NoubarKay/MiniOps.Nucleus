@@ -7,8 +7,7 @@ using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Services;
 
-public class NucleusRequestFlushService(
-    IRequestStore store,
+public sealed class NucleusRequestFlushService(
     NucleusDbContext dbContext,
     ILogger<NucleusRequestFlushService> logger) : BackgroundService
 {

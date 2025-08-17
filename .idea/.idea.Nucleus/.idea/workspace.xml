@@ -13,8 +13,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5df421e-6b30-4548-a66e-2392b9f7173f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/MiniOps.Nucleus.Core/MiniOps.Nucleus.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MiniOps.Nucleus.Core/MiniOps.Nucleus.Core.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/MiniOps.Nucleus.Dashboard.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/MiniOps.Nucleus.Dashboard.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Nucleus/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Nucleus/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MiniOps.Nucleus.Core/Services/NucleusRequestLogService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MiniOps.Nucleus.Core/Services/NucleusRequestLogService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/Middleware/NucleusDashboardMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/Middleware/NucleusDashboardMiddleware.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/wwwroot/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/MiniOps.Nucleus.Dashboard/wwwroot/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +50,9 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9efa986dcfe440369fd7e27b0efa78b114478/62/3586a2f4/SqlConnection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/user/Documents/GitHub/Nucleus/Nucleus.Core/Services/NucleusRequestFlushService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/user/Documents/GitHub/Nucleus/Nucleus.Core/Services/NucleusRequestFlushService.cs" root0="SKIP_HIGHLIGHTING" />
@@ -179,7 +185,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1755278332663</updated>
-      <workItem from="1755278333788" duration="20835000" />
+      <workItem from="1755278333788" duration="24131000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <option name="closed" value="true" />

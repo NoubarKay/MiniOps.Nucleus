@@ -9,8 +9,8 @@ using Z.Dapper.Plus;
 
 namespace Nucleus.Core.Services;
 
-public class NucleusRequestLogService(
-    IRequestStore store,
+public sealed class NucleusRequestLogService(
+    RequestStore store,
     NucleusDbContext dbContext,
     ILogger<NucleusRequestLogService> logger, 
     IHubContext<NucleusHub> hub) : BackgroundService
@@ -44,6 +44,14 @@ public class NucleusRequestLogService(
                     logs.Count,
                     stopwatch.ElapsedMilliseconds);
             }
+            else
+            {
+                await hub.Clients.All.SendAsync("ReceiveMetrics", new {
+                    totalRequests = 0,
+                    totalSuccessRequests = 0,
+                    totalFailedRequests = 0
+                }, cancellationToken: stoppingToken);
+            }
 
             await Task.Delay(interval, stoppingToken);
         }
@@ -65,7 +73,6 @@ public class NucleusRequestLogService(
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to flush logs on shutdown.");
-                // optional: write to disk/queue for retry later
             }
         }
 

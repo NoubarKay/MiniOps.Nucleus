@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Nucleus.Core.Hubs;
 
-public class NucleusHub : Hub
+public sealed class NucleusHub : Hub
 {
     public override async Task OnConnectedAsync()
     {

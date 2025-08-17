@@ -209,16 +209,19 @@
         type: "line",
         data: {
             datasets: [
-                { label: "Request Count", borderColor: "#00ffd0", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(0,255,208,0.2)" },
-                { label: "Success Count", borderColor: "#4bc05a", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(75,192,90,0.2)" },
-                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0.4, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+                { label: "Request Count", borderColor: "#00ffd0", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(0,255,208,0.2)" },
+                { label: "Success Count", borderColor: "#4bc05a", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(75,192,90,0.2)" },
+                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
             ]
         },
         options: {
             responsive: true,
             animation: false,
             plugins: {
-                tooltip: { enabled: true, mode: "nearest", intersect: false },
+                tooltip: { enabled: true},
                 legend: { display: false }
             },
             scales: {
@@ -258,6 +261,8 @@
         chart.data.datasets[0].data.push({ x: now, y: data.totalRequests });
         chart.data.datasets[1].data.push({ x: now, y: data.totalSuccessRequests });
         chart.data.datasets[2].data.push({ x: now, y: data.totalFailedRequests });
+
+        totalEl.innerText = (parseInt(totalEl.innerText) || 0) + data.totalRequests;
         
         chart.update("none");
     })

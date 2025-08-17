@@ -5,7 +5,7 @@ using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Middleware;
 
-public class NucleusTrackerMiddleware(RequestDelegate next, IRequestStore logStore)
+public sealed class NucleusTrackerMiddleware(RequestDelegate next, RequestStore logStore)
 {
     public async Task InvokeAsync(HttpContext context)
     {

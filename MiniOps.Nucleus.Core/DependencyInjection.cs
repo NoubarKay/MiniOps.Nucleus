@@ -34,15 +34,9 @@ public static class DependencyInjection
             LogTTLSeconds = options.LogTTLSeconds,
             BatchFlushIntervalSeconds = options.BatchFlushIntervalSeconds,
             SeedDatabase = options.SeedDatabase
-            // EnableSimulation = options.EnableSimulation,
-            // DefaultSimulatedLatencyMs = options.DefaultSimulatedLatencyMs,
-            // DefaultSimulatedFailureRate = options.DefaultSimulatedFailureRate,
-            // EnableVerboseLogging = options.EnableVerboseLogging,
-            // RequestLogTableName = options.RequestLogTableName,
-            // DbCommandTimeoutSeconds = options.DbCommandTimeoutSeconds
         }));
         
-        services.AddSingleton<IRequestStore, RequestStore>();
+        services.AddSingleton<RequestStore>();
         services.AddHostedService<NucleusRequestFlushService>();
         services.AddHostedService<NucleusRequestLogService>();
         

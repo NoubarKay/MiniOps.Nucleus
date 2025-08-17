@@ -1,4 +1,7 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Nucleus.Core.Hubs;
 
@@ -26,8 +29,16 @@ public static class NucleusDashboardMiddleware
     {
         // Get the assembly and set up the embedded file provider (adjust the namespace as needed)
         var assembly = Assembly.GetExecutingAssembly();
-        var embeddedFileProvider = new EmbeddedFileProvider(assembly, "MiniOps.Nucleus.Dashboard.wwwroot");
+        var embeddedFileProvider = new EmbeddedFileProvider(assembly, "Nucleus.Dashboard.wwwroot");
+        var contents = embeddedFileProvider.GetDirectoryContents(string.Empty);
 
+        foreach (var file in contents)
+        {
+            if (file.Exists)
+            {
+                Console.WriteLine(file.Name);
+            }
+        }
         // Ensure basePath starts with a "/" and does not end with one.
         if (string.IsNullOrEmpty(basePath))
             basePath = "/";
