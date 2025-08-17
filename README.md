@@ -4,10 +4,7 @@
 [![Downloads](https://img.shields.io/nuget/dt/MiniOps.Nucleus.Core?style=flat-square)](https://www.nuget.org/packages/MiniOps.Nucleus.Core)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 [![Size](https://img.shields.io/badge/package_size-26KB-lightgreen?style=flat-square)]()
-[![Release](https://img.shields.io/github/v/release/NoubarKay/MiniOps.Nucleus?style=flat-square)](https://github.com/NoubarKay/MiniOps.Nucleus/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/NoubarKay/MiniOps.Nucleus?style=flat-square)](https://github.com/NoubarKay/MiniOps.Nucleus/commits)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/NoubarKay/MiniOps.Nucleus/build.yml?style=flat-square)](https://github.com/NoubarKay/MiniOps.Nucleus/actions)
-
 
 **MiniOps.Nucleus** is a **high-performance, ultra-lightweight request metrics collector and real-time dashboard** for .NET applications.  
 With a footprint of just **26 KB**, it provides a minimal yet powerful solution for monitoring your application's request traffic without adding overhead.
