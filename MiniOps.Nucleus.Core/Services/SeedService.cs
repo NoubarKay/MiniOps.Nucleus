@@ -1,0 +1,64 @@
+using Nucleus.Core.Config;
+
+namespace Nucleus.Core.Services;
+
+public sealed class SeedService
+{
+    public string GetSeed(NucleusDatabaseTypes dbType) =>
+        dbType switch
+        {
+            NucleusDatabaseTypes.SQLServer => SqlServerSeed,
+            NucleusDatabaseTypes.PostGres => PostgresSeed,
+            NucleusDatabaseTypes.SQLite => SqliteSeed,
+            _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
+        };
+    
+    private const string SqlServerSeed = @"
+        IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Nucleus')
+        BEGIN
+            EXEC('CREATE SCHEMA [Nucleus]')
+        END;
+
+        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
+        BEGIN
+            CREATE TABLE [Nucleus].[RequestMetrics](
+                [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+                [Timestamp] DATETIME2 NOT NULL,
+                [DurationMs] BIGINT NOT NULL,
+                [StatusCode] INT NOT NULL,
+                [Path] NVARCHAR(2048) NOT NULL
+            );
+
+            CREATE NONCLUSTERED INDEX IX_RequestMetrics_Timestamp
+            ON [Nucleus].[RequestMetrics]([Timestamp]);
+        END;
+    ";
+
+    private const string PostgresSeed = @"
+        CREATE SCHEMA IF NOT EXISTS ""Nucleus"";
+
+        CREATE TABLE IF NOT EXISTS ""Nucleus"".""RequestMetrics"" (
+            ""Id"" UUID PRIMARY KEY NOT NULL,
+            ""Timestamp"" TIMESTAMPTZ NOT NULL,
+            ""DurationMs"" BIGINT NOT NULL,
+            ""StatusCode"" INT NOT NULL,
+            ""Path"" VARCHAR(2048) NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS IX_RequestMetrics_Timestamp
+        ON ""Nucleus"".""RequestMetrics""(""Timestamp"");
+    ";
+    
+    private const string SqliteSeed = @"
+    CREATE TABLE IF NOT EXISTS RequestMetrics (
+        Id TEXT PRIMARY KEY NOT NULL,
+        Timestamp DATETIME NOT NULL,
+        DurationMs INTEGER NOT NULL,
+        StatusCode INTEGER NOT NULL,
+        Path TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS IX_RequestMetrics_Timestamp
+    ON RequestMetrics(Timestamp);
+";
+}

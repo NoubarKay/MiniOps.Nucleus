@@ -43,34 +43,16 @@ public class NucleusDbContext(NucleusOptions options)
         return connection;
     }
     
-    public async Task EnsureNucleusDatabase(string connectionString)
+    public async Task EnsureNucleusDatabase(string connectionString, string sql)
     {
         try{
-            var createTableSql = @"
-            IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Nucleus')
-            BEGIN
-                EXEC('CREATE SCHEMA [Nucleus]')
-            END;
-
-            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
-            BEGIN
-                CREATE TABLE [Nucleus].[RequestMetrics](
-                    [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-                    [Timestamp] DATETIME2 NOT NULL,
-                    [DurationMs] BIGINT NOT NULL,
-                    [StatusCode] INT NOT NULL,
-                    [Path] NVARCHAR(2048) NOT NULL
-                );
-
-                -- Add index on Timestamp for faster queries and deletes
-                CREATE NONCLUSTERED INDEX IX_RequestMetrics_Timestamp
-                ON [Nucleus].[RequestMetrics]([Timestamp]);
-            END;
-            ";
-            using var connection = new SqlConnection(connectionString);
+            ArgumentNullException.ThrowIfNull(connectionString);
+            ArgumentNullException.ThrowIfNull(sql);
+            
+            await using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
 
-            await connection.ExecuteAsync(createTableSql);
+            await connection.ExecuteAsync(sql);
             Console.WriteLine("Nucleus tables are ready.");
         }
         catch (Exception ex)
@@ -79,9 +61,9 @@ public class NucleusDbContext(NucleusOptions options)
             throw;
         }
     }
-    
-    /// <summary>
-    /// Convenience property for TTL in TimeSpan format.
-    /// </summary>
-    public TimeSpan LogTTL => TimeSpan.FromSeconds(Options.LogTTLSeconds);
+
+    public NucleusOptions GetConfig()
+    {
+        return Options;
+    }
 }

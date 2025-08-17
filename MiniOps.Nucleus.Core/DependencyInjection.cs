@@ -35,7 +35,8 @@ public static class DependencyInjection
             BatchFlushIntervalSeconds = options.BatchFlushIntervalSeconds,
             SeedDatabase = options.SeedDatabase
         }));
-        
+
+        services.AddScoped<SeedService>();
         services.AddSingleton<RequestStore>();
         services.AddHostedService<NucleusRequestFlushService>();
         services.AddHostedService<NucleusRequestLogService>();
@@ -53,10 +54,11 @@ public static class DependencyInjection
         using (var scope = app.ApplicationServices.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<NucleusDbContext>();
+            var seedService = scope.ServiceProvider.GetRequiredService<SeedService>();
 
             if (dbContext.Options.SeedDatabase)
             {
-                await dbContext.EnsureNucleusDatabase(dbContext.Options.ConnectionString);
+                await dbContext.EnsureNucleusDatabase(dbContext.Options.ConnectionString, seedService.GetSeed(dbContext.Options.DatabaseType));
             }
         }
 
