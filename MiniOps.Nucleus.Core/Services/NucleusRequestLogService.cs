@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Collections.Concurrent;
 using Dapper;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +16,15 @@ public sealed class NucleusRequestLogService(
     ILogger<NucleusRequestLogService> logger, 
     IHubContext<NucleusHub> hub) : BackgroundService
 {
+    private readonly ConcurrentDictionary<DateTime, Aggregate> _inMemoryAggregates = new();
+
+    private class Aggregate
+    {
+        public int TotalRequests;
+        public int SuccessRequests;
+        public int FailedRequests;
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var interval = TimeSpan.FromSeconds(dbContext.Options.BatchFlushIntervalSeconds);
@@ -28,21 +38,66 @@ public sealed class NucleusRequestLogService(
                 using var conn = dbContext.CreateConnection();
                 await dbContext.OpenAsync(conn, stoppingToken);
 
+                foreach (var log in logs)
+                {
+                    var bucket = log.Timestamp.AddTicks(-(log.Timestamp.Ticks % TimeSpan.TicksPerSecond));
+                    var agg = _inMemoryAggregates.GetOrAdd(bucket, _ => new Aggregate());
+
+                    agg.TotalRequests++;
+                    if (log.StatusCode == 200)
+                        agg.SuccessRequests++;
+                    else
+                        agg.FailedRequests++;
+                }
+
                 var stopwatch = Stopwatch.StartNew();
 
-                await conn.BulkInsertAsync(logs);
+                var insertLogsTask = conn.BulkInsertAsync(logs);
+
+                var aggregatesToInsert = _inMemoryAggregates.Select(kvp => new
+                {
+                    BucketTime = kvp.Key,
+                    TotalRequests = kvp.Value.TotalRequests,
+                    SuccessRequests = kvp.Value.SuccessRequests,
+                    FailedRequests = kvp.Value.FailedRequests
+                }).ToList();
+
+                var sql = @"
+                MERGE [Nucleus].[RequestAggregates] AS target
+                USING (VALUES (@BucketTime, @TotalRequests, @SuccessRequests, @FailedRequests)) 
+                    AS source (BucketTime, TotalRequests, SuccessRequests, FailedRequests)
+                ON target.BucketTime = source.BucketTime
+                WHEN MATCHED THEN 
+                    UPDATE SET 
+                        TotalRequests = target.TotalRequests + source.TotalRequests,
+                        SuccessRequests = target.SuccessRequests + source.SuccessRequests,
+                        FailedRequests = target.FailedRequests + source.FailedRequests
+                WHEN NOT MATCHED THEN
+                    INSERT (BucketTime, TotalRequests, SuccessRequests, FailedRequests)
+                    VALUES (source.BucketTime, source.TotalRequests, source.SuccessRequests, source.FailedRequests);";
+
+                var insertAggregatesTask = conn.ExecuteAsync(sql, aggregatesToInsert);
+
+                await Task.WhenAll(insertLogsTask, insertAggregatesTask);
 
                 stopwatch.Stop();
+
+                var totalRequests = logs.Count;
+                var totalSuccess = logs.Count(x => x.StatusCode == 200);
+                var totalFailed = logs.Count(x => x.StatusCode != 200);
+
                 await hub.Clients.All.SendAsync("ReceiveMetrics", new {
-                    totalRequests = logs.Count,
-                    totalSuccessRequests = logs.Count(x => x.StatusCode == 200),
-                    totalFailedRequests = logs.Count(x=>x.StatusCode != 200)
+                    totalRequests,
+                    totalSuccessRequests = totalSuccess,
+                    totalFailedRequests = totalFailed
                 }, cancellationToken: stoppingToken);
-                
+
                 logger.LogInformation(
-                    "Inserted {Count} request logs in {ElapsedMs} ms",
-                    logs.Count,
+                    "Inserted {Count} logs in {ElapsedMs} ms",
+                    totalRequests,
                     stopwatch.ElapsedMilliseconds);
+
+                _inMemoryAggregates.Clear();
             }
             else
             {
@@ -56,7 +111,7 @@ public sealed class NucleusRequestLogService(
             await Task.Delay(interval, stoppingToken);
         }
     }
-    
+
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         var remainingLogs = store.Flush();

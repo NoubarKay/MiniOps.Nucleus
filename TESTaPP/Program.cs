@@ -41,11 +41,16 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
     {
-        // 25% chance to fail
+        // 25% chance to fail with 500
         if (Random.Shared.NextDouble() < 0.25)
         {
-            // This will return a 500 Internal Server Error
             throw new Exception("Simulated server error");
+        }
+
+        // 25% chance to return 404
+        if (Random.Shared.NextDouble() < 0.25)
+        {
+            return Results.NotFound(new { Message = "Simulated not found" });
         }
 
         var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -57,7 +62,7 @@ app.MapGet("/weatherforecast", () =>
                 ))
             .ToArray();
 
-        return forecast;
+        return Results.Ok(forecast);
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();

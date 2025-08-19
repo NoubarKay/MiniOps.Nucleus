@@ -19,7 +19,9 @@ public sealed class SeedService
             EXEC('CREATE SCHEMA [Nucleus]')
         END;
 
-        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
+        -- RequestMetrics Table
+        IF NOT EXISTS (SELECT * FROM sys.tables 
+                       WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
         BEGIN
             CREATE TABLE [Nucleus].[RequestMetrics](
                 [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
@@ -32,7 +34,19 @@ public sealed class SeedService
             CREATE NONCLUSTERED INDEX IX_RequestMetrics_Timestamp
             ON [Nucleus].[RequestMetrics]([Timestamp]);
         END;
-    ";
+
+        -- RequestAggregates Table
+        IF NOT EXISTS (SELECT * FROM sys.tables 
+                       WHERE name = 'RequestAggregates' AND schema_id = SCHEMA_ID('Nucleus'))
+        BEGIN
+            CREATE TABLE [Nucleus].[RequestAggregates](
+                BucketTime DATETIME2 NOT NULL PRIMARY KEY,  -- 1 row per second
+                TotalRequests INT NOT NULL DEFAULT 0,
+                SuccessRequests INT NOT NULL DEFAULT 0,
+                FailedRequests INT NOT NULL DEFAULT 0
+            );
+        END;
+        ";
 
     private const string PostgresSeed = @"
         CREATE SCHEMA IF NOT EXISTS ""Nucleus"";
