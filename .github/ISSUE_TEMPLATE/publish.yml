@@ -31,4 +31,4 @@ jobs:
       run: dotnet pack MiniOps.Nucleus.Dashboard/MiniOps.Nucleus.Dashboard.csproj --configuration Release --no-build -o ./artifacts /p:PackageVersion=${GITHUB_REF_NAME#v}
 
     - name: Publish to NuGet
-      run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ secrets.CORE_NUGET_PUBLISH_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
