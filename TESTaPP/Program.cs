@@ -10,16 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddNucleus(op =>
-{
-    op.LogTTLSeconds = 60;
-    op.BatchFlushIntervalSeconds = 1;
-    op.DatabaseType = NucleusDatabaseTypes.SQLServer;
-    op.SchemaName = "Nucleus";
-    op.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                          throw new InvalidOperationException();
-    op.SeedDatabase = true;
-});
+builder.Services.AddNucleus(nucleus => nucleus
+    .UseDatabase(NucleusDatabaseTypes.SQLServer, 
+        builder.Configuration.GetConnectionString("DefaultConnection")!)
+    .WithSchema("Nucleus")
+    .EnableSeedDatabase()
+    .SetLogTtl(60)
+    .SetBatchFlushInterval(1)
+    .WithCustomTables("RequestMetrics",  "RequestAggregates")
+);
 
 builder.Services.AddNucleusDashboardService();
 

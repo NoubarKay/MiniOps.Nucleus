@@ -18,8 +18,7 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(configure);
         
-        DapperPlusManager.Entity<NucleusLog>()
-            .Table("Nucleus.RequestMetrics");
+
 
         var options = new NucleusOptions();
         configure(options);
@@ -33,13 +32,19 @@ public static class DependencyInjection
             ConnectionString = options.ConnectionString,
             LogTTLSeconds = options.LogTTLSeconds,
             BatchFlushIntervalSeconds = options.BatchFlushIntervalSeconds,
-            SeedDatabase = options.SeedDatabase
+            SeedDatabase = options.SeedDatabase,
+            RequestMetricsTable = options.RequestMetricsTable,
+            RequestAggregatesTable = options.RequestAggregatesTable,
+            SchemaName = options.SchemaName,
         }));
 
         services.AddScoped<SeedService>();
         services.AddSingleton<RequestStore>();
         services.AddHostedService<NucleusRequestFlushService>();
         services.AddHostedService<NucleusRequestLogService>();
+        
+        DapperPlusManager.Entity<NucleusLog>()
+            .Table($"Nucleus.{options.RequestMetricsTable}");
         
         return services;
     }

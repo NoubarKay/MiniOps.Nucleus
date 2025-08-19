@@ -2,7 +2,7 @@ using Nucleus.Core.Config;
 
 namespace Nucleus.Core.Services;
 
-public sealed class SeedService
+public sealed class SeedService(NucleusDbContext context)
 {
     public string GetSeed(NucleusDatabaseTypes dbType) =>
         dbType switch
@@ -13,7 +13,7 @@ public sealed class SeedService
             _ => throw new NotSupportedException($"Database type {dbType} is not supported.")
         };
     
-    private const string SqlServerSeed = @"
+    private string SqlServerSeed = @$"
         IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Nucleus')
         BEGIN
             EXEC('CREATE SCHEMA [Nucleus]')
@@ -21,9 +21,9 @@ public sealed class SeedService
 
         -- RequestMetrics Table
         IF NOT EXISTS (SELECT * FROM sys.tables 
-                       WHERE name = 'RequestMetrics' AND schema_id = SCHEMA_ID('Nucleus'))
+                       WHERE name = '{context.Options.RequestMetricsTable}' AND schema_id = SCHEMA_ID('Nucleus'))
         BEGIN
-            CREATE TABLE [Nucleus].[RequestMetrics](
+            CREATE TABLE [Nucleus].[{context.Options.RequestMetricsTable}](
                 [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
                 [Timestamp] DATETIME2 NOT NULL,
                 [DurationMs] BIGINT NOT NULL,
@@ -32,14 +32,14 @@ public sealed class SeedService
             );
 
             CREATE NONCLUSTERED INDEX IX_RequestMetrics_Timestamp
-            ON [Nucleus].[RequestMetrics]([Timestamp]);
+            ON [Nucleus].[{context.Options.RequestMetricsTable}]([Timestamp]);
         END;
 
         -- RequestAggregates Table
         IF NOT EXISTS (SELECT * FROM sys.tables 
-                       WHERE name = 'RequestAggregates' AND schema_id = SCHEMA_ID('Nucleus'))
+                       WHERE name = '{context.Options.RequestAggregatesTable}' AND schema_id = SCHEMA_ID('Nucleus'))
         BEGIN
-            CREATE TABLE [Nucleus].[RequestAggregates](
+            CREATE TABLE [Nucleus].[{context.Options.RequestAggregatesTable}](
                 BucketTime DATETIME2 NOT NULL PRIMARY KEY,  -- 1 row per second
                 TotalRequests INT NOT NULL DEFAULT 0,
                 SuccessRequests INT NOT NULL DEFAULT 0,
