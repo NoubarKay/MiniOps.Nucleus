@@ -3,32 +3,35 @@ name: Publish to NuGet
 on:
   push:
     tags:
-      - 'v*'   # Trigger only when pushing a tag starting with "v", e.g. v1.0.0
+      - 'v*'   # Trigger automatically on tags starting with "v"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish'
+        required: true
+        default: 'v0.0.1'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'   # Change if using .NET 6/7
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-    - name: Pack Core NuGet package
-      run: dotnet pack MiniOps.Nucleus.Core/MiniOps.Nucleus.Core.csproj --configuration Release --no-build -o ./artifacts /p:PackageVersion=${GITHUB_REF_NAME#v}
+      - name: Pack Core NuGet package
+        run: dotnet pack MiniOps.Nucleus.Core/MiniOps.Nucleus.Core.csproj --configuration Release --no-build -o ./artifacts /p:PackageVersion=${{ github.event.inputs.tag }}
 
-#    - name: Pack Dashboard NuGet package
-#      run: dotnet pack MiniOps.Nucleus.Dashboard/MiniOps.Nucleus.Dashboard.csproj --configuration Release --no-build -o ./artifacts /p:PackageVersion=${GITHUB_REF_NAME#v}
-
-    - name: Publish to NuGet
-      run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ secrets.CORE_NUGET_PUBLISH_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Publish to NuGet
+        run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ secrets.CORE_NUGET_PUBLISH_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
