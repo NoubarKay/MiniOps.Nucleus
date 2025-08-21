@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniOps.Nucleus.Core", "MiniOps.Nucleus.Core\MiniOps.Nucleus.Core.csproj", "{419B550F-3257-486C-A87C-183BE6A6F592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TESTaPP", "TESTaPP\TESTaPP.csproj", "{8730C30E-9A95-4370-8005-895F22417705}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniOps.Nucleus.TestApi", "MiniOps.Nucleus.TestApi\MiniOps.Nucleus.TestApi.csproj", "{8730C30E-9A95-4370-8005-895F22417705}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniOps.Nucleus.Dashboard", "MiniOps.Nucleus.Dashboard\MiniOps.Nucleus.Dashboard.csproj", "{FA0B1669-5B8B-4697-AE48-3DF4011A4C03}"
 EndProject

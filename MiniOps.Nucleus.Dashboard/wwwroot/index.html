@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@1.27.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
@@ -10,128 +10,103 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
     <title>Nucleus Dashboard</title>
     <style>
-        /* Base dark theme */
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #0f111a;
-            color: #e0e0e0;
-        }
+        /* Reset & base */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: #1b1d2a; color: #f0f0f0; }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
-            background-color: #1a1c2b;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+            background: #272938;
+            border-bottom: 1px solid #3a3c4f;
         }
 
-        header h1 {
-            font-size: 1.7rem;
-            letter-spacing: 1px;
-        }
-
+        header h1 { font-size: 1.5rem; font-weight: 500; color: #fff; }
         header button {
-            background: #4ade80;
-            color: #000;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
+            background: #4caf50; color: #fff; border: none; padding: 0.5rem 1rem;
+            border-radius: 4px; font-weight: 500; cursor: pointer; transition: 0.2s;
         }
-
-        header button:hover {
-            background: #22c55e;
-        }
+        header button:hover { background: #45a049; }
 
         .container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
+            display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
             padding: 1rem 2rem;
         }
 
         .card {
-            background-color: #1c1e34;
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            background: #272938;
+            border: 1px solid #3a3c4f;
+            border-radius: 6px;
+            padding: 1rem;
+            flex: 1 1 300px;
             display: flex;
             flex-direction: column;
+            gap: 1rem;
         }
 
         .metrics {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            gap: 1rem;
         }
 
         .metric {
-            text-align: center;
             flex: 1;
-            margin: 0 0.5rem;
-            background: #111227;
-            padding: 1rem;
-            border-radius: 12px;
-            transition: transform 0.2s;
+            background: #1f2130;
+            padding: 0.8rem 1rem;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #3a3c4f;
         }
+        .metric h2 { font-size: 0.85rem; font-weight: 500; color: #aaa; margin-bottom: 0.5rem; }
+        .metric p { font-size: 1.5rem; font-weight: 600; color: #fff; }
 
-        .metric:hover {
-            transform: translateY(-4px);
-        }
-
-        .metric h2 { margin: 0; font-size: 1rem; color: #aaa; }
-        .metric p { margin: 0.5rem 0 0 0; font-size: 1.5rem; font-weight: bold; }
+        canvas { width: 100% !important; border-radius: 4px; background: #1f2130; }
 
         .ticker {
+            background: #1f2130;
+            border: 1px solid #3a3c4f;
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-size: 0.85rem;
             overflow-x: auto;
             white-space: nowrap;
-            padding: 0.5rem;
-            background-color: #111227;
-            border-radius: 12px;
-            height: 50px;
-            line-height: 50px;
-            margin-top: 1rem;
         }
-
         .ticker span {
             display: inline-block;
-            margin-right: 1rem;
-            padding: 0 0.5rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        .success { background-color: #4ade80; color: #000; }
-        .error   { background-color: #f87171; color: #000; }
-        .warning { background-color: #facc15; color: #000; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        table th, table td {
-            padding: 0.5rem;
-            border-bottom: 1px solid #2c2c3e;
-            text-align: left;
-        }
-
-        table th {
-            background-color: #111227;
+            margin-right: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
             font-weight: 500;
+        }
+        .success { background: #4caf50; color: #fff; }
+        .error { background: #f44336; color: #fff; }
+        .warning { background: #ff9800; color: #fff; }
+
+        .chart-container {
+            position: relative;       /* needed for Chart.js responsive */
+            width: 100%;              /* full width of parent */
+            height: 400px;            /* set the height you want */
+            padding: 20px;            /* optional internal padding */
+            background: #1f2130;
+            border-radius: 6px;
+            border: 1px solid #3a3c4f;
         }
 
         canvas {
-            border-radius: 12px;
-            background: #111227;
-            margin-top: 1rem;
+            width: 100% !important;
+            height: 100% !important;
         }
 
+        /* Small responsive tweaks */
+        @media (max-width: 768px) {
+            .metrics { flex-direction: column; }
+            .metric { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -142,9 +117,15 @@
 </header>
 
 <div class="container">
+    <!-- Left circle chart -->
+    <div class="card" style="flex: 0 0 33%;">
+        <div class="chart-container">
+            <canvas id="circleChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+    </div>
 
-    <!-- Main Panel -->
-    <div class="card">
+    <!-- Right line chart -->
+    <div class="card" style="flex: 0 0 66%;">
         <div class="metrics">
             <div class="metric">
                 <h2>Total Requests</h2>
@@ -160,39 +141,14 @@
             </div>
         </div>
 
-        <!-- Streaming Chart -->
-        <canvas id="metricsChart" width="600" height="200"></canvas>
+        <div class="chart-container">
+            <canvas id="metricsChart"></canvas>
+        </div>
 
-        <!-- Ticker -->
-        <h3>Request Ticker</h3>
         <div class="ticker" id="ticker"></div>
     </div>
-
-    <!-- Right Panel -->
-    <div class="card">
-        <h2>Nodes Status</h2>
-        <ul id="nodes">
-            <li>Node A: healthy</li>
-            <li>Node B: healthy</li>
-            <li>Node C: warning</li>
-        </ul>
-
-        <h2>Recent Requests</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Path</th>
-                <th>Duration</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-            <tbody id="requestTable">
-            </tbody>
-        </table>
-    </div>
-
 </div>
+
 <script>
     // Metrics counters
     const totalEl = document.getElementById('total');
@@ -204,33 +160,116 @@
 
     // Setup chart
     const ctx = document.getElementById("metricsChart").getContext("2d");
+    ctx.canvas.width  = ctx.canvas.clientWidth * window.devicePixelRatio;
+    ctx.canvas.height = ctx.canvas.clientHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
+    const crosshairPlugin = {
+        id: 'crosshair',
+        afterDraw: chart => {
+            if (!chart.tooltip._active || chart.tooltip._active.length === 0) return;
+
+            const ctx = chart.ctx;
+            const x = chart.tooltip._active[0].element.x; // X position of hovered point
+            const topY = chart.scales.y.top;
+            const bottomY = chart.scales.y.bottom;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x, topY);
+            ctx.lineTo(x, bottomY);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255,255,255,1)'; // subtle, modern
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+    
     const chart = new Chart(ctx, {
         type: "line",
         data: {
             datasets: [
-                { label: "Request Count", borderColor: "#00ffd0", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(0,255,208,0.2)" },
-                { label: "Success Count", borderColor: "#4bc05a", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(75,192,90,0.2)" },
-                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
-                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
-                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
-                { label: "Fail Count", borderColor: "#e84c4c", fill: true, tension: 0, pointRadius: 0, data: [], borderWidth: 2, backgroundColor: "rgba(232,76,76,0.2)" },
+                {
+                    label: "Request Count",
+                    borderColor: "#4b9ce2",
+                    backgroundColor: "rgba(75,156,226,0.1)",
+                    fill: true,
+                    tension: 0.4, // smooth curves
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    data: []
+                },
+                {
+                    label: "Success Count",
+                    borderColor: "#3ac08c",
+                    backgroundColor: "rgba(58,192,140,0.1)",
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    data: []
+                },
+                {
+                    label: "Fail Count",
+                    borderColor: "#e14c4c",
+                    backgroundColor: "rgba(225,76,76,0.1)",
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    data: []
+                }
             ]
         },
         options: {
             responsive: true,
             animation: false,
+            maintainAspectRatio: false,
             plugins: {
-                tooltip: { enabled: true},
+                tooltip: {
+                    mode: 'index',          // show all 3 datasets at hover
+                    intersect: false,       // trigger tooltip even if not directly on a point
+                    backgroundColor: 'rgba(39, 41, 56, 0.95)', // dark semi-transparent background
+                    titleColor: '#fff',     // title color
+                    bodyColor: '#ccc',      // body color
+                    borderColor: '#3a3c4f', // subtle border
+                    borderWidth: 1,
+                    padding: 10,
+                    cornerRadius: 6,
+                    displayColors: true,    // show dataset color boxes
+                    boxWidth: 10,
+                    boxHeight: 10,
+                    boxPadding: 2,
+                    bodySpacing: 6,         // space between each dataset in tooltip
+                    callbacks: {
+                        label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}`
+                    },
+                    multiKeyBackground: '#1f2130' // for multiple items, separate background
+                },
+                interaction: {
+                    mode: 'index',      // also ensures interaction shows all 3 datasets
+                    intersect: false
+                },
                 legend: { display: false }
+            },
+            layout: {
+                padding: {
+                    top: 20,
+                    right: 7,
+                    bottom: 20,
+                    left: 7
+                }
             },
             scales: {
                 x: {
                     type: "realtime",
                     realtime: {
                         duration: 30000,
-                        refresh: 10000,
-                        delay: 2000,
+                        refresh: 500,
+                        delay: 1000,
                         onRefresh: chart => {
                             // Nothing here; we will push data from SignalR
                         }
@@ -244,8 +283,65 @@
                     grid: { color: "rgba(255,255,255,0.05)" }
                 }
             }
-        }
+        },
+        plugins: [crosshairPlugin]
     });
+
+
+    const circleCtx = document.getElementById('circleChart').getContext('2d');
+
+    const circleChart = new Chart(circleCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Success', 'Fail'],
+            datasets: [{
+                data: [0, 0, 0],
+                backgroundColor: ['#3ac08c', '#e14c4c', '#4b9ce2'],
+                borderWidth: 2,
+                borderColor: '#1b1d2a',
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: 20
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#ccc' } },
+                tooltip: {
+                    enabled: true,
+                    callbacks: { label: ctx => `${ctx.label}: ${ctx.raw.toLocaleString()}` }
+                },
+                centerText: {  // custom plugin configuration
+                    text: 'Total Requests',
+                    color: '#fff',
+                    font: {
+                        size: '18',
+                        weight: '600'
+                    }
+                }
+            },
+            cutout: '60%'
+        },
+        plugins: [{
+            id: 'centerText',
+            afterDraw: chart => {
+                const {ctx, chartArea: {top, bottom, left, right, width, height}} = chart;
+                ctx.save();
+                const text = chart.options.plugins.centerText.text;
+                const fontSize = chart.options.plugins.centerText.font.size;
+                ctx.font = `${chart.options.plugins.centerText.font.weight} ${fontSize}px sans-serif`;
+                ctx.fillStyle = chart.options.plugins.centerText.color;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, left + width / 2, top + height / 2);
+                ctx.restore();
+            }
+        }]
+    });
+    
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/dashboard/nucleus-hub")
         .withAutomaticReconnect()
@@ -256,17 +352,27 @@
         .catch(err => console.error(err));
 
     connection.on("ReceiveMetrics", (data) => {
-        console.log("Received Metrics", data);
         const now = Date.now();
+        console.log(now);
         chart.data.datasets[0].data.push({ x: now, y: data.totalRequests });
         chart.data.datasets[1].data.push({ x: now, y: data.totalSuccessRequests });
         chart.data.datasets[2].data.push({ x: now, y: data.totalFailedRequests });
 
-        totalEl.innerText = (parseInt(totalEl.innerText) || 0) + data.totalRequests;
-        successEl.innerText = (parseInt(successEl.innerText) || 0) + data.totalSuccessRequests;
-        errorsEl.innerText = (parseInt(errorsEl.innerText) || 0) + data.totalFailedRequests;
+        circleChart.data.datasets[0].data[0] = (circleChart.data.datasets[0].data[0] || 0) + data.totalSuccessRequests;
+        circleChart.data.datasets[0].data[1] = (circleChart.data.datasets[0].data[1] || 0) + data.totalFailedRequests;
+
+        const totalAccumulated = circleChart.data.datasets[0].data[0] + circleChart.data.datasets[0].data[1];
+        const successRate = totalAccumulated ? ((circleChart.data.datasets[0].data[0] / totalAccumulated) * 100).toFixed(1) : 0;
+
+        circleChart.options.plugins.centerText.text = `${successRate}%`;
         
-        chart.update("none");
+        circleChart.update("none");
+
+        totalEl.innerText = ((parseInt(totalEl.innerText.replace(/,/g, '')) || 0) + data.totalRequests).toLocaleString();
+        successEl.innerText = ((parseInt(successEl.innerText.replace(/,/g, '')) || 0) + data.totalSuccessRequests).toLocaleString();
+        errorsEl.innerText = ((parseInt(errorsEl.innerText.replace(/,/g, '')) || 0) + data.totalFailedRequests).toLocaleString();
+
+        // chart.update("none");
     })
 </script>
 

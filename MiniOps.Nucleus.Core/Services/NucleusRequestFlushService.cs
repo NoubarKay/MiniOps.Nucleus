@@ -15,14 +15,12 @@ public sealed class NucleusRequestFlushService(
     {
         var interval = TimeSpan.FromSeconds(1);
         var table = $"{dbContext.Options.SchemaName}.RequestMetrics";
-
+        using var conn = dbContext.CreateConnection();
+        await dbContext.OpenAsync(conn, stoppingToken);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                using var conn = dbContext.CreateConnection();
-                await dbContext.OpenAsync(conn, stoppingToken);
-
                 var sql = $@"
                     DELETE FROM {table}
                     WHERE Timestamp < @ExpiryTime;";
@@ -31,14 +29,14 @@ public sealed class NucleusRequestFlushService(
 
                 var deletedCount = await conn.ExecuteAsync(sql, new { ExpiryTime = expiryTime });
 
-                if (deletedCount > 0)
-                {
-                    logger.LogInformation(
-                        "Deleted {Count} expired request logs older than {ExpiryTime:O}",
-                        deletedCount,
-                        expiryTime
-                    );
-                }
+                // if (deletedCount > 0)
+                // {
+                //     logger.LogInformation(
+                //         "Deleted {Count} expired request logs older than {ExpiryTime:O}",
+                //         deletedCount,
+                //         expiryTime
+                //     );
+                // }
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {

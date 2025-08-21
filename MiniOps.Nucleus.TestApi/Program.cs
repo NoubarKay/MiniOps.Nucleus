@@ -16,10 +16,10 @@ builder.Services.AddNucleus(nucleus => nucleus
     .WithSchema("Nucleus")
     .EnableSeedDatabase()
     .SetLogTtl(60)
-    .SetBatchFlushInterval(1)
+    .SetBatchFlushInterval(0.5f)
     .WithCustomTables("RequestMetrics",  "RequestAggregates")
 );
-
+builder.Logging.AddFilter("Nucleus", LogLevel.Information);
 builder.Services.AddNucleusDashboardService();
 
 var app = builder.Build();
@@ -43,7 +43,7 @@ app.MapGet("/weatherforecast", () =>
         // 25% chance to fail with 500
         if (Random.Shared.NextDouble() < 0.25)
         {
-            throw new Exception("Simulated server error");
+            return Results.BadRequest("Simulated server error");
         }
 
         // 25% chance to return 404

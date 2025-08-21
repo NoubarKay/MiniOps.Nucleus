@@ -39,7 +39,7 @@ public static class DependencyInjection
         }));
 
         services.AddScoped<SeedService>();
-        services.AddSingleton<RequestStore>();
+        services.AddSingleton<IRequestStore, MemoryRequestStore>();
         services.AddHostedService<NucleusRequestFlushService>();
         services.AddHostedService<NucleusRequestLogService>();
         

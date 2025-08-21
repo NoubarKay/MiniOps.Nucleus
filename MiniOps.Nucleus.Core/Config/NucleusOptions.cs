@@ -101,7 +101,7 @@ public sealed class NucleusOptions
     /// </summary>
     /// <param name="interval">Flush interval in seconds.</param>
     /// <returns>The current <see cref="NucleusOptions"/> instance for fluent configuration.</returns>
-    public NucleusOptions SetBatchFlushInterval(int interval)
+    public NucleusOptions SetBatchFlushInterval(float interval)
     {
         BatchFlushIntervalSeconds = interval;
         return this;

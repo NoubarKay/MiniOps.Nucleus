@@ -4,12 +4,12 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.2.0</Version>
+        <Version>0.2.1</Version>
         <IsPackable>true</IsPackable>
         <RootNamespace>Nucleus.Core</RootNamespace>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
-        <PackageIcon>images\logo.png</PackageIcon>
+        <PackageIcon>Images/logo.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,7 +22,7 @@
       <PackageReference Include="Z.Dapper.Plus" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.16"/>
       <None Include=".\ReadMe.md" Pack="true" PackagePath="\"/>
-      <None Include="Images\logo.png" Pack="true" Visible="false" PackagePath="Images\" />
+      <None Include=".\Images\logo.png" Pack="true" Visible="false" PackagePath="Images\" />
     </ItemGroup>
 
 </Project>
