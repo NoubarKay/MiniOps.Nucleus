@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MiniOps.Nucleus.Redis.DependencyInjection;
 using Nucleus.Core;
 using Nucleus.Core.Config;
 using Nucleus.Dashboard.Middleware;
@@ -16,9 +17,13 @@ builder.Services.AddNucleus(nucleus => nucleus
     .WithSchema("Nucleus")
     .EnableSeedDatabase()
     .SetLogTtl(60)
-    .SetBatchFlushInterval(0.5f)
+    .SetBatchFlushInterval(1)
     .WithCustomTables("RequestMetrics",  "RequestAggregates")
-);
+).AddNucleusRedis(op =>
+{
+    // op.ConnectionString = "default:djjB7Pq8frMm3RMZWX6P2FZEkiI5bMg7cuZwb11ny8eiwsTUeqcMUOPLpCFlX603@69.62.116.35:5412/0";
+    op.ConnectionString = "user=default,password=djjB7Pq8frMm3RMZWX6P2FZEkiI5bMg7cuZwb11ny8eiwsTUeqcMUOPLpCFlX603,69.62.116.35:5412";
+});
 builder.Logging.AddFilter("Nucleus", LogLevel.Information);
 builder.Services.AddNucleusDashboardService();
 

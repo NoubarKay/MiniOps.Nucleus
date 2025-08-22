@@ -14,5 +14,6 @@
     <ItemGroup>
       <ProjectReference Include="..\MiniOps.Nucleus.Core\MiniOps.Nucleus.Core.csproj" />
       <ProjectReference Include="..\MiniOps.Nucleus.Dashboard\MiniOps.Nucleus.Dashboard.csproj" />
+      <ProjectReference Include="..\MiniOps.Nucleus.Redis\MiniOps.Nucleus.Redis.csproj" />
     </ItemGroup>
 </Project>

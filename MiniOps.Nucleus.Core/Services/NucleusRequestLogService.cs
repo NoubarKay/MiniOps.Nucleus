@@ -5,114 +5,63 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Nucleus.Core.Hubs;
-using Nucleus.Core.Models;
 using Nucleus.Core.Stores;
 using Z.Dapper.Plus;
 
 namespace Nucleus.Core.Services;
 
-
 public sealed class NucleusRequestLogService(
-    MemoryRequestStore store,
+    IRequestStore store,
     NucleusDbContext dbContext,
     ILogger<NucleusRequestLogService> logger, 
     IHubContext<NucleusHub> hub) : BackgroundService
 {
-    private NucleusDbContext? _connection;
-
-    private class Aggregate
-    {
-        public int TotalRequests;
-        public int SuccessRequests;
-        public int FailedRequests;
-    }
-
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var batchInterval = TimeSpan.FromSeconds(dbContext.Options.BatchFlushIntervalSeconds);
-        var aggregateInterval = TimeSpan.FromSeconds(dbContext.Options.BatchFlushIntervalSeconds); // for SignalR
-        var conn = dbContext.CreateConnection();
-        await dbContext.OpenAsync(conn, stoppingToken);
+        var interval = TimeSpan.FromSeconds(dbContext.Options.BatchFlushIntervalSeconds);
 
-        var batch = new List<NucleusLog>();
-        var nextBatchFlush = DateTime.UtcNow.Add(batchInterval);
-        var nextAggregateSend = DateTime.UtcNow.Add(aggregateInterval);
-
-        int totalRequests = 0;
-        int totalSuccess = 0;
-        int totalFailed = 0;
-
-        await foreach (var log in store.ReadAllAsync(stoppingToken))
+        while (!stoppingToken.IsCancellationRequested)
         {
-            batch.Add(log);
+            var logs = await store.ReadAllAsync(stoppingToken);
 
-            // Update per-second aggregates
-            totalRequests++;
-            if (log.StatusCode == 200) totalSuccess++;
-            else totalFailed++;
-
-            var now = DateTime.UtcNow;
-
-            // Send per-second aggregate to SignalR
-            if (now >= nextAggregateSend)
+            if (logs.Count > 0)
             {
-                await hub.Clients.All.SendAsync("ReceiveMetrics", new
-                {
+                using var conn = dbContext.CreateConnection();
+                await dbContext.OpenAsync(conn, stoppingToken);
+
+                var stopwatch = Stopwatch.StartNew();
+                var insertLogsTask = conn.BulkInsertAsync(logs);
+                stopwatch.Stop();
+
+                var totalRequests = logs.Count;
+                var totalSuccess = logs.Count(x => x.StatusCode == 200);
+                var totalFailed = logs.Count(x => x.StatusCode != 200);
+
+                await hub.Clients.All.SendAsync("ReceiveMetrics", new {
                     totalRequests,
                     totalSuccessRequests = totalSuccess,
                     totalFailedRequests = totalFailed
                 }, cancellationToken: stoppingToken);
+                
 
-                // Reset counters for the next cycle
-                totalRequests = 0;
-                totalSuccess = 0;
-                totalFailed = 0;
-
-                nextAggregateSend = now.Add(aggregateInterval);
+                // logger.LogInformation(
+                //     "Inserted {Count} request logs in {ElapsedMs} ms",
+                //     totalRequests,
+                //     stopwatch.ElapsedMilliseconds);
             }
-
-            // Flush batch to DB if interval elapsed
-            if (now >= nextBatchFlush)
+            else
             {
-                if (batch.Count > 0)
-                {
-                    var stopwatch = Stopwatch.StartNew();
-                    await conn.BulkInsertAsync(batch);
-                    stopwatch.Stop();
-                    logger.LogInformation("Inserted {Count} logs in {ElapsedMs} ms", batch.Count, stopwatch.ElapsedMilliseconds);
-                    batch.Clear();
-                }
-
-                nextBatchFlush = now.Add(batchInterval);
+                await hub.Clients.All.SendAsync("ReceiveMetrics", new {
+                    totalRequests = 0,
+                    totalSuccessRequests = 0,
+                    totalFailedRequests = 0
+                }, cancellationToken: stoppingToken);
             }
-        }
 
-        // Final flush on shutdown
-        if (batch.Count > 0)
-        {
-            await conn.BulkInsertAsync(batch);
+            await Task.Delay(interval, stoppingToken);
         }
     }
-    //
-    // public override async Task StopAsync(CancellationToken cancellationToken)
-    // {
-    //     var remainingLogs = store.Flush();
-    //     if (remainingLogs.Count > 0)
-    //     {
-    //         using var conn = dbContext.CreateConnection();
-    //         await dbContext.OpenAsync(conn, cancellationToken);
-    //
-    //         try
-    //         {
-    //             await conn.BulkInsertAsync(remainingLogs);
-    //             logger.LogInformation("Flushed {Count} logs on shutdown", remainingLogs.Count);
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             logger.LogError(ex, "Failed to flush logs on shutdown.");
-    //         }
-    //     }
-    //
-    //     await base.StopAsync(cancellationToken);
-    // }
+    
 }
+

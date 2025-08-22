@@ -268,10 +268,10 @@
                     type: "realtime",
                     realtime: {
                         duration: 30000,
-                        refresh: 500,
-                        delay: 1000,
+                        refresh: 1000,
+                        delay: 2000,
                         onRefresh: chart => {
-                            // Nothing here; we will push data from SignalR
+                            chart.update("none");
                         }
                     },
                     ticks: { color: "#ccc" },

@@ -23,8 +23,8 @@ public sealed class SeedService(NucleusDbContext context)
         IF NOT EXISTS (SELECT * FROM sys.tables 
                        WHERE name = '{context.Options.RequestMetricsTable}' AND schema_id = SCHEMA_ID('Nucleus'))
         BEGIN
-            CREATE TABLE [Nucleus].[{context.Options.RequestMetricsTable}](
-                [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+            CREATE TABLE [Nucleus].[{{context.Options.RequestMetricsTable}}](
+                [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
                 [Timestamp] DATETIME2 NOT NULL,
                 [DurationMs] BIGINT NOT NULL,
                 [StatusCode] INT NOT NULL,

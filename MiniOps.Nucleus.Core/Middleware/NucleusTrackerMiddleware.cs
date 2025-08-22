@@ -5,7 +5,7 @@ using Nucleus.Core.Stores;
 
 namespace Nucleus.Core.Middleware;
 
-public sealed class NucleusTrackerMiddleware(RequestDelegate next, MemoryRequestStore logStore)
+public sealed class NucleusTrackerMiddleware(RequestDelegate next, IRequestStore logStore)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -28,14 +28,13 @@ public sealed class NucleusTrackerMiddleware(RequestDelegate next, MemoryRequest
 
             var metric = new NucleusLog
             {
-                Id = Guid.NewGuid(),
                 Timestamp = DateTime.UtcNow,
                 DurationMs = stopwatch.ElapsedMilliseconds,
                 StatusCode = statusCode,
                 Path = context.Request?.Path.Value ?? "/"
             };
 
-            logStore.Add(metric);
+            await logStore.Add(metric);
         }
     }
 }

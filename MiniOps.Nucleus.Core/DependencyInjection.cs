@@ -44,7 +44,8 @@ public static class DependencyInjection
         services.AddHostedService<NucleusRequestLogService>();
         
         DapperPlusManager.Entity<NucleusLog>()
-            .Table($"Nucleus.{options.RequestMetricsTable}");
+            .Table($"Nucleus.{options.RequestMetricsTable}").Identity(x => x.Id)
+            .Key(x => x.Id);
         
         return services;
     }

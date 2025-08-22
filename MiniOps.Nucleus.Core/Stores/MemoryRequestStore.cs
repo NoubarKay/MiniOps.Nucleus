@@ -25,6 +25,18 @@ public sealed class MemoryRequestStore : IRequestStore
     }
 
     // Async stream of logs
-    public IAsyncEnumerable<NucleusLog> ReadAllAsync(CancellationToken cancellationToken = default)
-        => _channel.Reader.ReadAllAsync(cancellationToken);
+    public async Task<IReadOnlyList<NucleusLog>> ReadAllAsync(CancellationToken cancellationToken = default)
+    {
+        var logs = new List<NucleusLog>();
+
+        while (await _channel.Reader.WaitToReadAsync(cancellationToken))
+        {
+            while (_channel.Reader.TryRead(out var log))
+            {
+                logs.Add(log);
+            }
+        }
+
+        return logs.AsReadOnly();
+    }
 }

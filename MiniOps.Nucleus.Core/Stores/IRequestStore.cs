@@ -6,5 +6,5 @@ public interface IRequestStore
 {
     Task Add(NucleusLog log);
 
-    IAsyncEnumerable<NucleusLog> ReadAllAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<NucleusLog>> ReadAllAsync(CancellationToken cancellationToken = default);
 }
